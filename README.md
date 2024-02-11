@@ -1,0 +1,56 @@
+# ADLAUNCHER-CORE | MINECRAFT LAUNCHER WITH NODE JS
+
+This is a simple minecraft-core for download and play minecraft with node.js. Phase Alpha / Simple minecraft-core para descargar y jugar minecraft con node.js en fase Alpha.
+
+---
+
+Este en un proyecto desarrollado en Node encargado de conseguir los archivos para ejectuar minecraft Vanilla (por el momento). En el futuro se estará actualizando el paquete.
+
+## Notes
+El paquete está en versión Alpha, las versiones habilitadas son 1.8 hacia arriba.
+
+El proyecto no está habilitado para jugar en servidores premium. (No se apoya a la piratería).
+
+## Usage
+
+### Install
+`npm i adlauncher-core`
+
+### Download Version
+```js
+const { Downloader } = require('adlauncher-core');
+
+const downloader = new Downloader();
+
+// Especifica la versión que quieras descargar (1.8.9) y el directorio 
+// downloader.download('[version]', '[path]').then(a => console.log(a)).catch(e => console.log(e))
+downloader.download('1.8', './minecraft').then(a => console.log(a)).catch(e => console.log(e))
+```
+
+### Launch Version
+```js
+const { Launcher } = require('./components/Handler');
+
+const launcher = new Launcher();
+
+// Declara las opciones con las que vas a lanzar una versión de Minecraft
+const launchOptions = {
+  username: 'dani_adbg', // Ingresa tu nombre de usuario
+  version: '1.8', // Ingresa la versión
+  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
+  memory: { // Define la memoria que quieras usar
+    min: '2G', // Mínimo de memoria
+    max: '6G'  // Máximo de memoria
+  }
+}
+
+launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
+```
+
+### Support
+[![](https://dcbadge.vercel.app/api/server/a93w5NpBR9)](https://discord.gg/a93w5NpBR9)
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://www.youtube.com/@dani_adbg)
+
+----
+
+Project developed by: `dani_adbg`
