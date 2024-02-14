@@ -52,6 +52,25 @@ launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ### OptiFine
 En el caso que quieras jugar con optimización y necesites instalar OptiFine, deberás instalarlo de manera manual y especificar en `version` la carpeta de OptiFine instalada.
 
+```js
+const { Launcher } = require('./components/Handler');
+
+const launcher = new Launcher();
+
+// Declara las opciones con las que vas a lanzar una versión de Minecraft
+const launchOptions = {
+  username: 'dani_adbg', // Ingresa tu nombre de usuario
+  version: '1.8.9-OptiFine_HD_U_M5', // Ingresa la versión de OptiFine
+  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
+  memory: { // Define la memoria que quieras usar
+    min: '2G', // Mínimo de memoria
+    max: '6G'  // Máximo de memoria
+  }
+}
+
+launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
+```
+
 ## Support
 [![](https://dcbadge.vercel.app/api/server/a93w5NpBR9)](https://discord.gg/a93w5NpBR9)
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://www.youtube.com/@dani_adbg)
