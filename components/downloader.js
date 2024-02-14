@@ -114,12 +114,13 @@ class Downloader {
       this.file.libraries.forEach(async element => {
         const el = element.downloads.classifiers;
         const natives = (typeof el === 'object' && (el['natives-windows'] ? el['natives-windows'] : el['natives-windows-64']))
-        if(typeof el === 'object' && natives) {
+        if(natives) {
           try {
             await this.down(natives.url, path.join(this.root, this.natives), path.basename(natives.path))
   
+            if(this.version === '1.8' && natives.url.includes('nightly')) return fs.unlinkSync(path.join(this.root, this.natives, path.basename(natives.path)));
             new Zip(path.join(path.join(this.root, this.natives), path.basename(natives.path))).extractAllTo(path.join(this.root, this.natives, this.version), true)
-  
+
             fs.unlinkSync(path.join(this.root, this.natives, path.basename(natives.path)))
           } catch (error) {
             reject(new Error('Error al descargar los archivos nativos de la versión.', error));
@@ -151,7 +152,6 @@ class Downloader {
       resolve(`LIBRERÍAS DESCARGADAS - ${path.join(this.root, this.libraries)}`);
     })
   }
-
 
   download(version, root) {
     this.version = version;

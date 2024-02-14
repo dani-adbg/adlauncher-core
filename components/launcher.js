@@ -109,7 +109,7 @@ class Launcher {
       }
     }
 
-    console.log(args)
+    // console.log(args)
     const spawnRoot = path.resolve(rootPath)
     const minecraft = spawn('java', args, { cwd: spawnRoot })
     console.log(`INICIANDO MINECRAFT VERSION: ${version}`);
