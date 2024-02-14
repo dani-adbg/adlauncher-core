@@ -24,12 +24,12 @@ class Launcher {
         if(['1.14', '1.14.1', '1.14.2', '1.14.3'].includes(ver)) {
           if(path.extname(archivo) === '.jar' && files.includes(archivo)) {
             archivosJARString += rutaCompleta + ';';
-            console.log(archivo)
+            // console.log(archivo)
           }
         } else {
           if (path.extname(archivo) === '.jar' && files.includes(archivo) && !archivo.includes('3.2.1')) {
             archivosJARString += rutaCompleta + ';';
-            console.log(archivo)
+            // console.log(archivo)
           }
         }
       }
@@ -55,18 +55,33 @@ class Launcher {
     const minM = options.memory.min;
     const maxM = options.memory.max;
     const rootPath = options.gameDirectory;
-    const version = options.version;
+    const version = options.version.match(/\b1\.\d+(\.\d+)?\b/g)[0];
+    const custom = options.version !== version ? options.version : null
+
     const username = options.username;
     const file = JSON.parse(fs.readFileSync(path.join(rootPath, this.downloader.versions, version, `${version}.json`), { encoding: 'utf-8'}));
-
     this.createProfile(rootPath);
     const uuid = this.auth(rootPath, username);
     const reqLibs = [];
     file.libraries.forEach(element => {
       if(element.downloads.artifact !== undefined) reqLibs.push(path.basename(element.downloads.artifact.path))
     })
+    let mainClass = file.mainClass;
+    let gameArgs = file.minecraftArguments ? file.minecraftArguments.split(' ') : file.arguments.game;
+    if(custom !== null) {
+      const customFile = JSON.parse(fs.readFileSync(path.join(rootPath, this.downloader.versions, custom, `${custom}.json`), { encoding: 'utf-8' }));
+      customFile.libraries.forEach(element => {
+        reqLibs.push(element.name.split(':').slice(-2).join("-").concat('.jar'))
+      });
+      mainClass = customFile.mainClass;
+      if(!customFile.arguments) {
+        gameArgs = customFile.minecraftArguments.split(' ');
+      } else {
+        gameArgs.push(customFile.minecraftArguments ? customFile.minecraftArguments.split(' ') : customFile.arguments.game)
+      }
+    }
     let libs = this.encontrarArchivosJAR(path.resolve(path.join(rootPath, this.downloader.libraries)), reqLibs, version);
-    libs += path.resolve(path.join(rootPath, this.downloader.versions, version, `${version}.jar`));
+    custom === null ? libs += path.resolve(path.join(rootPath, this.downloader.versions, version, `${version}.jar`)) : libs += path.resolve(path.join(rootPath, this.downloader.versions, custom, `${custom}.jar`));
     const fields = {
       '${auth_access_token}': uuid,
       '${auth_session}': uuid,
@@ -86,19 +101,15 @@ class Launcher {
       '${resolution_height}': 482
     }
 
-    let mems = [
-      `-Xmx${maxM}`,
-      `-Xms${minM}`
-    ];
-
     let args = [
       `-Djava.library.path=${path.resolve(path.join(rootPath, this.downloader.natives, version)) ? path.resolve(path.join(rootPath, this.downloader.natives, version)) : path.resolve(path.join(rootPath))}`,
-      mems,
+      `-Xmx${maxM}`,
+      `-Xms${minM}`,
       '-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump',
       '-cp',
       libs,
-      file.mainClass,
-      file.minecraftArguments ? file.minecraftArguments.split(' ') : file.arguments.game
+      mainClass,
+      gameArgs.flat()
     ];
 
     args = args.reduce((acc, curr) => acc.concat(curr), [])
@@ -115,7 +126,6 @@ class Launcher {
     console.log(`INICIANDO MINECRAFT VERSION: ${version}`);
     minecraft.stdout.on('data', (data) => console.log(data.toString()))
     minecraft.stderr.on('data', (data) => console.log(data.toString()))
-    
   }
 }
 
