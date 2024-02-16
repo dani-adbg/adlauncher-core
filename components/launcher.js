@@ -77,11 +77,12 @@ class Launcher {
       if(!customFile.arguments) {
         gameArgs = customFile.minecraftArguments.split(' ');
       } else {
-        gameArgs.push(customFile.minecraftArguments ? customFile.minecraftArguments.split(' ') : customFile.arguments.game)
+        gameArgs.push(customFile.arguments.game)
       }
+      if(fs.existsSync(path.resolve(path.join(rootPath, 'options.txt')))) fs.unlinkSync(path.resolve(path.join(rootPath, 'options.txt')));
     }
     let libs = this.encontrarArchivosJAR(path.resolve(path.join(rootPath, this.downloader.libraries)), reqLibs, version);
-    custom === null ? libs += path.resolve(path.join(rootPath, this.downloader.versions, version, `${version}.jar`)) : libs += path.resolve(path.join(rootPath, this.downloader.versions, custom, `${custom}.jar`));
+    custom === null || custom.includes('fabric') ? libs += path.resolve(path.join(rootPath, this.downloader.versions, version, `${version}.jar`)) : libs += path.resolve(path.join(rootPath, this.downloader.versions, custom, `${custom}.jar`));
     const fields = {
       '${auth_access_token}': uuid,
       '${auth_session}': uuid,
