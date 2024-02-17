@@ -31,7 +31,7 @@ downloader.download('1.8.9', './minecraft').then(a => console.log(a)).catch(e =>
 
 ### Launch Version
 ```js
-const { Launcher } = require('./components/Handler');
+const { Launcher } = require('adlauncher-core');
 
 const launcher = new Launcher();
 
@@ -52,8 +52,9 @@ launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ### OptiFine
 En el caso que quieras jugar con optimización y necesites instalar OptiFine, deberás instalarlo de manera manual y especificar en `version` la carpeta de OptiFine instalada.
 
+Si tienes problemas al instalar `Fabric` de forma manual, puedes ver [Cómo instalar OptiFine en MINECRAFT](https://youtu.be/hPIQIweUXL8?si=ZhKtysEGmv2Ijsn5)
 ```js
-const { Launcher } = require('./components/Handler');
+const { Launcher } = require('adlauncher-core');
 
 const launcher = new Launcher();
 
@@ -61,6 +62,31 @@ const launcher = new Launcher();
 const launchOptions = {
   username: 'dani_adbg', // Ingresa tu nombre de usuario
   version: '1.8.9-OptiFine_HD_U_M5', // Ingresa la versión de OptiFine
+  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
+  memory: { // Define la memoria que quieras usar
+    min: '2G', // Mínimo de memoria
+    max: '6G'  // Máximo de memoria
+  }
+}
+
+launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
+```
+
+### Fabric
+En el caso de que quieras jugar con mods, ya está disponible en `adlauncher-core` el soporte de fabric.
+
+Debes instalarlo de forma manual al igual que OptiFine (ya luego lo haré automatizado) y especificar en `version` la carpeta de fabric instalada.
+
+Si tienes problemas al instalar `Fabric` de forma manual, puedes ver [Cómo INSTALAR FABRIC y MODS en MINECRAFT](https://youtu.be/taUC6R_LiOE?si=Ewz36e0YfV0LOWAp)
+```js
+const { Launcher } = require('adlauncher-core');
+
+const launcher = new Launcher();
+
+// Declara las opciones con las que vas a lanzar una versión de Minecraft
+const launchOptions = {
+  username: 'dani_adbg', // Ingresa tu nombre de usuario
+  version: 'fabric-loader-0.15.7-1.18', // Ingresa la versión de Fabric
   gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
   memory: { // Define la memoria que quieras usar
     min: '2G', // Mínimo de memoria
