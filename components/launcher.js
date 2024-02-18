@@ -15,25 +15,24 @@ class Launcher {
     }
   }
 
-  encontrarArchivosJAR(directorio, files, ver) {
+encontrarArchivosJAR(directorio, files, ver) {
     const archivos = fs.readdirSync(directorio);
     let archivosJARString = '';
 
     archivos.forEach((archivo) => {
-      const rutaCompleta = path.join(directorio, archivo);
-      if (fs.statSync(rutaCompleta).isDirectory()) {
-        archivosJARString += this.encontrarArchivosJAR(rutaCompleta, files, ver);
-      } else {
-        if (ver.includes('1.14') && path.extname(archivo) === '.jar' && files.includes(archivo)) {
-          archivosJARString += rutaCompleta + ';';
-        } else if (!ver.includes('1.14') && path.extname(archivo) === '.jar' && files.includes(archivo) && !archivo.includes('3.2.1')) {
-          archivosJARString += rutaCompleta + ';';
+        const rutaCompleta = path.join(directorio, archivo);
+        if (fs.statSync(rutaCompleta).isDirectory()) {
+            archivosJARString += this.encontrarArchivosJAR(rutaCompleta, files, ver);
+        } else {
+            const jarVersion = this.extraerVersionJar(archivo);
+            if (jarVersion && jarVersion >= '1.14' && jarVersion <= '1.14.4' && path.extname(archivo) === '.jar' && files.includes(archivo)) {
+                archivosJARString += rutaCompleta + ';';
+            }
         }
-      }
     });
 
     return archivosJARString;
-  }
+}
 
   auth(root, us) {
     try {
