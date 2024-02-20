@@ -138,6 +138,10 @@ Forge fue un total dolor de cabeza. Si ocurre un error, reportalo de inmediato e
 
 ---
 
+# Contributors
+
+<img src="https://contrib.rocks/image?repo=dani-adbg/adlauncher-core">
+
 ## Support
 [![](https://dcbadge.vercel.app/api/server/a93w5NpBR9)](https://discord.gg/a93w5NpBR9)
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://www.youtube.com/@dani_adbg)
