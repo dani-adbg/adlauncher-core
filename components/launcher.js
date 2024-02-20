@@ -1,17 +1,31 @@
-const fs = require('fs');
-const { spawn } = require('child_process');
-const path = require('path');
-const downloader = require('./downloader');
-const { v4: uuidv4 } = require('uuid');
+const fs = require('fs'); // Módulo para trabajar con el sistema de archivos
+const { spawn } = require('child_process'); // Módulo para crear procesos secundarios
+const path = require('path'); // Módulo para trabajar con rutas de archivos y directorios
+const downloader = require('./downloader'); // Módulo de descarga personalizado
+const { v4: uuidv4 } = require('uuid'); // Módulo para generar UUID
 
+/**
+ * Clase Launcher para gestionar el lanzamiento de Minecraft.
+ */
 class Launcher {
 
+  /**
+   * Método para crear el perfil de lanzamiento si no existe.
+   * @param {string} root - Ruta del directorio raíz del juego.
+   */
   createProfile(root) {
     if(!fs.existsSync(path.join(root, 'launcher_profiles.json'))) {
       fs.writeFileSync(path.resolve(path.join(root, 'launcher_profiles.json')), JSON.stringify({ profiles: {}  }));
     }
   }
 
+  /**
+   * Método para encontrar archivos JAR en un directorio y subdirectorios.
+   * @param {string} directorio - Directorio a explorar.
+   * @param {Array} files - Lista de archivos a buscar.
+   * @param {string} ver - Versión de Minecraft.
+   * @returns {string} - Cadena de archivos JAR encontrados.
+   */
   encontrarArchivosJAR(directorio, files, ver) {
     const archivos = fs.readdirSync(directorio);
     let archivosJARString = '';
@@ -24,12 +38,10 @@ class Launcher {
         if(['1.14', '1.14.1', '1.14.2', '1.14.3'].includes(ver)) {
           if(path.extname(archivo) === '.jar' && files.includes(archivo)) {
             archivosJARString += rutaCompleta + ';';
-            // console.log(archivo)
           }
         } else {
           if (path.extname(archivo) === '.jar' && files.includes(archivo) && !archivo.includes('3.2.1')) {
             archivosJARString += rutaCompleta + ';';
-            // console.log(archivo)
           }
         }
       }
@@ -38,6 +50,12 @@ class Launcher {
     return archivosJARString;
   }
 
+  /**
+   * Método para autenticar al usuario y obtener su UUID.
+   * @param {string} root - Ruta del directorio raíz del juego.
+   * @param {string} us - Nombre de usuario.
+   * @returns {string} - UUID del usuario.
+   */
   auth(root, us) {
     try {
       const fil = JSON.parse(fs.readFileSync(path.join(root, 'usercache.json'), { encoding: 'utf-8'}))
@@ -48,6 +66,10 @@ class Launcher {
     }
   }
 
+  /**
+   * Método para lanzar el juego Minecraft.
+   * @param {Object} options - Opciones de lanzamiento del juego.
+   */
   launch(options) {
     
     this.downloader = new downloader(this);
@@ -121,7 +143,6 @@ class Launcher {
       }
     }
 
-    // console.log(args)
     const spawnRoot = path.resolve(rootPath)
     const minecraft = spawn('java', args, { cwd: spawnRoot })
     console.log(`INICIANDO MINECRAFT VERSION: ${version}`);
@@ -130,4 +151,4 @@ class Launcher {
   }
 }
 
-module.exports = Launcher;
+module.exports = Launcher; // Exportar la clase Launcher para su uso en otros archivos
