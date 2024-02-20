@@ -1,6 +1,6 @@
 {
   "name": "adlauncher-core",
-  "version": "0.2.1",
+  "version": "1.0",
   "description": "Un módulo que permite la descarga y la ejecución de minecraft java con node.js",
   "keywords": [
     "minecraft",
@@ -9,7 +9,11 @@
     "minecraft-core",
     "javascript",
     "node",
-    "nodejs"
+    "nodejs",
+    "minecraft-launcher-core",
+    "optifine",
+    "forge",
+    "fabric"
   ],
   "license": "MIT",
   "author": "dani_adbg",
