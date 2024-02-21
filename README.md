@@ -104,7 +104,7 @@ En el caso de que quieras jugar con mods y no te gusta `fabric`, ya está dispon
 
 Debes instalarlo de forma manual al igual que OptiFine y Fabric, especifica en `version` la carpeta de forge instalada.
 
-Si tienes problemas al instalar `Forge` de forma manual, puedes ver ESPERA A QUE SUBA EL VIDEO.
+Si tienes problemas al instalar `Forge` de forma manual, puedes ver [Cómo INSTALAR FORGE y MODS en MINECRAFT](https://youtu.be/ccecMbYgBKI).
 
 ```js
 const { Launcher } = require('adlauncher-core');
