@@ -3,6 +3,7 @@ const path = require('path'); // Módulo para manipulación de rutas de archivos
 let https = require('https'); // Módulo para realizar solicitudes HTTPS
 https.globalAgent.maxSockets = 2; // Establece el número máximo de conexiones simultáneas para solicitudes HTTPS
 const Zip = require('adm-zip'); // Módulo para manipular archivos ZIP
+const EventEmitter = require('events'); // Módulo para emitir eventos
 
 // Clase Downloader para descargar archivos relacionados con Minecraft
 class Downloader {
@@ -11,18 +12,20 @@ class Downloader {
     this.url = {
       meta: 'https://launchermeta.mojang.com/mc/game/version_manifest.json', // URL del archivo de metadatos de versiones
       resource: 'https://resources.download.minecraft.net', // URL base para descargar recursos de Minecraft
-    },
+    };
     // Directorio de almacenamiento en caché
-    this.cache = 'cache',
+    this.cache = 'cache';
     // Directorio para almacenar versiones descargadas
-    this.versions = 'versions',
+    this.versions = 'versions';
     // Directorio para almacenar activos descargados
-    this.assets = 'assets',
+    this.assets = 'assets';
     // Directorio para almacenar bibliotecas descargadas
-    this.libraries = 'libraries',
+    this.libraries = 'libraries';
     // Directorio para almacenar archivos nativos descargados
-    this.natives = 'natives'
-  }
+    this.natives = 'natives';
+    // Define el emisor de eventos
+    this.emisor = new EventEmitter();
+  };
   
   // Método para descargar un archivo desde una URL dada
   async down(url, dir, name) {
@@ -39,7 +42,8 @@ class Downloader {
   
           // Manejar el evento de finalización de escritura
           writeToFile.on('finish', () => {
-            resolve(`Se ha descargado correctamente ${name}.`);
+            // Resuelve la promesa
+            resolve();
           });
   
           // Manejar errores de escritura
@@ -54,44 +58,48 @@ class Downloader {
     } catch (error) {
       console.error('Error en la descarga:', error);
       throw error;
-    }
-  }
+    };
+  };
 
   // Método para descargar la versión de Minecraft
   downloadVersion() {
     return new Promise(async (resolve, reject) => {
+      // Emite el evento downloadFiles
+      await this.emisor.emit('downloadFiles', 'Downloading main files.');
       // Crear directorio de caché si no existe
-      if(!fs.existsSync(path.join(this.root, this.cache, 'json'))) fs.mkdirSync(path.join(this.root, this.cache, 'json'), { recursive: true })
+      if(!fs.existsSync(path.join(this.root, this.cache, 'json'))) fs.mkdirSync(path.join(this.root, this.cache, 'json'), { recursive: true });
       // Descargar el archivo de metadatos de versiones
       await this.down(this.url.meta, path.join(this.root, this.cache, 'json'), 'version_manifest.json');
 
       // Verificar si el directorio de caché existe
       if(fs.existsSync(path.join(this.root, this.cache))) {
         // Leer el archivo de metadatos de versiones
-        let ver = JSON.parse(fs.readFileSync(path.join(this.root, this.cache, 'json', 'version_manifest.json'), { encoding: 'utf-8' }))
+        let ver = JSON.parse(fs.readFileSync(path.join(this.root, this.cache, 'json', 'version_manifest.json'), { encoding: 'utf-8' }));
         // Encontrar la URL de la versión específica
         const verJson = ver.versions.find(x => x.type === 'release' && x.id === this.version).url;
         // Lanzar un error si la versión no existe
         if (!verJson) throw "La version no existe.";
         
         // Crear directorio de la versión si no existe
-        if(!fs.existsSync(path.join(this.root,this.versions, this.version))) fs.mkdirSync(path.join(this.root, this.versions, this.version), { recursive: true})
+        if(!fs.existsSync(path.join(this.root,this.versions, this.version))) fs.mkdirSync(path.join(this.root, this.versions, this.version), { recursive: true});
         try {
           // Descargar el archivo JSON de la versión específica
-          await this.down(verJson, path.join(this.root, this.versions, this.version), `${this.version}.json`)
+          await this.down(verJson, path.join(this.root, this.versions, this.version), `${this.version}.json`);
         } catch (error) {
           // Manejar errores de descarga
           reject(new Error('Error al descargar el archivo de metadatos de la versión.', error));
-        }
-      }
+        };
+      };
       // Resolver la promesa
-      resolve(`VERSION: ${this.version}`)
-    })
-  }
+      resolve();
+    });
+  };
 
   // Método para descargar el cliente de Minecraft
   downloadClient() {
     return new Promise(async (resolve, reject) => {
+      // Emite el evento downloadFiles
+      this.emisor.emit('downloadFiles', 'Downloading client.');
       // Obtener la ruta del archivo JSON de la versión
       this.file = path.join(this.root, this.versions, this.version, `${this.version}.json`);
       // Leer el archivo JSON de la versión
@@ -100,7 +108,7 @@ class Downloader {
       // Obtener la URL del cliente
       const client = this.file.downloads.client.url;
       // Crear directorio de la versión si no existe
-      if(!fs.existsSync(path.join(this.root, this.versions, this.version))) fs.mkdirSync(path.join(this.root, this.versions, this.version))
+      if(!fs.existsSync(path.join(this.root, this.versions, this.version))) fs.mkdirSync(path.join(this.root, this.versions, this.version));
       try {
         // Descargar el archivo .jar del cliente
         await this.down(client, path.join(this.root, this.versions, this.version), `${this.version}.jar`);
@@ -109,15 +117,18 @@ class Downloader {
         reject(new Error('Error al descargar el archivo .jar de la versión.', error));
       }
       // Resolver la promesa
-      resolve(`CLIENTE DESCARGADO - ${this.version}.jar`);
-    })
-  }
+      resolve();
+    });
+  };
 
   // Método para descargar los activos de Minecraft
   downloadAssets() {
     return new Promise(async (resolve, reject) => {
+      // Emite el evento downloadFiles
+      this.emisor.emit('downloadFiles', 'Downloading assets.');
       // Crear directorio de índices de activos si no existe
-      if(!fs.existsSync(path.join(this.root, this.assets, 'indexes'))) fs.mkdirSync(path.join(this.root, this.assets, 'indexes'), { recursive: true })
+      if(!fs.existsSync(path.join(this.root, this.assets, 'indexes'))) fs.mkdirSync(path.join(this.root, this.assets, 'indexes'), { recursive: true });
+      const totalSize = this.file.assetIndex.totalSize;
       // Descargar el archivo de índice de activos
       await this.down(this.file.assetIndex.url, path.join(this.root, this.assets, 'indexes'), `${this.version}.json`);
       // Descargar el archivo de índice de activos en caché
@@ -126,68 +137,94 @@ class Downloader {
       // Leer el archivo de índice de activos
       const assetFile = JSON.parse(fs.readFileSync(path.join(this.root, this.assets, 'indexes', `${this.version}.json`)));
       // Crear directorio de objetos de activos si no existe
-      if(!fs.existsSync(path.join(this.root, this.assets, 'objects'))) fs.mkdirSync(path.join(this.root, this.assets, 'objects'))
+      if(!fs.existsSync(path.join(this.root, this.assets, 'objects'))) fs.mkdirSync(path.join(this.root, this.assets, 'objects'));
+
+      // Define variables que servirán para el evento percentDownloaded
+      let size = 0, percentage;
+      const targetPercentages = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+      const percentageReached = {};
+      for (const targetPercentage of targetPercentages) {
+        percentageReached[targetPercentage] = false;
+      };
 
       // Iterar sobre los objetos de activos
       for (const key in assetFile.objects) {
         if (assetFile.objects.hasOwnProperty.call(assetFile.objects, key)) {
-          const fileName = assetFile.objects[key];
-          const fileHash = fileName.hash;
-          const fileSubHash = fileHash.substring(0, 2);
+          const fileName = assetFile.objects[key]; // objeto
+          const fileSize = fileName.size; // tamaño del objeto
+          const fileHash = fileName.hash; // nombre del objeto
+          const fileSubHash = fileHash.substring(0, 2); // nombre de la carpeta del objeto
           
           // Crear directorio de subhash si no existe
-          if(!fs.existsSync(path.join(this.root, this.assets, 'objects', fileSubHash))) fs.mkdirSync(path.join(this.root, this.assets, 'objects', fileSubHash))
+          if(!fs.existsSync(path.join(this.root, this.assets, 'objects', fileSubHash))) fs.mkdirSync(path.join(this.root, this.assets, 'objects', fileSubHash));
           try {
             // Descargar los recursos de activos
-            this.down(`${this.url.resource}/${fileSubHash}/${fileHash}`, path.join(this.root, this.assets, 'objects', fileSubHash), fileName.hash).then(a => console.log(a)).catch(e => console.log(e))
-            
+            this.down(`${this.url.resource}/${fileSubHash}/${fileHash}`, path.join(this.root, this.assets, 'objects', fileSubHash), fileName.hash).then(() => { 
+              // Se le da nuevos valores a las variables de percentDownloaded
+              size += fileSize; 
+              percentage = Math.floor(((size / totalSize) * 100)); 
+              for (const targetPercentage of targetPercentages) {
+                if (percentage >= targetPercentage && !percentageReached[targetPercentage]) {
+                  // Emite el evento percentDownloaded
+                  this.emisor.emit('percentDownloaded', `${targetPercentage}% downloaded!`);
+                  percentageReached[targetPercentage] = true;
+
+                  // Si está completamente descargado, se resulve la promesa
+                  if(targetPercentage === 100) {
+                    resolve();
+                  };
+                };
+              };
+            }).catch(e => reject(new Error('ERROR', e)));
           } catch (error) {
             // Manejar errores de descarga
             reject(new Error('Error al descargar los recursos de la versión.', error));
-          }
-        }
-      }
-      // Resolver la promesa
-      resolve(`RECURSOS DESCARGADOS - ${path.join(this.root, this.assets)}`)
-    })
-  }
+          };
+        };
+      };
+    });
+  };
 
   // Método para descargar los archivos nativos
   downloadNatives() {
     return new Promise((resolve, reject) => {
+      // Emite el evento downloadFiles
+      this.emisor.emit('downloadFiles', 'Downloading natives.');
       // Crear directorio de nativos si no existe
       if(!fs.existsSync(path.join(this.root, this.natives))) fs.mkdirSync(path.join(this.root, this.natives));
 
       // Iterar sobre las bibliotecas y descargar los archivos nativos si están disponibles
       this.file.libraries.forEach(async element => {
         const el = element.downloads.classifiers;
-        const natives = (typeof el === 'object' && (el['natives-windows'] ? el['natives-windows'] : el['natives-windows-64']))
+        const natives = (typeof el === 'object' && (el['natives-windows'] ? el['natives-windows'] : el['natives-windows-64']));
         if(natives) {
           try {
             // Descargar el archivo nativo
-            await this.down(natives.url, path.join(this.root, this.natives), path.basename(natives.path))
+            await this.down(natives.url, path.join(this.root, this.natives), path.basename(natives.path));
   
             // Eliminar el archivo nativo si la versión es 1.8 y es una compilación nocturna
             if(this.version === '1.8' && natives.url.includes('nightly')) return fs.unlinkSync(path.join(this.root, this.natives, path.basename(natives.path)));
             // Extraer el archivo ZIP
-            new Zip(path.join(path.join(this.root, this.natives), path.basename(natives.path))).extractAllTo(path.join(this.root, this.natives, this.version), true)
+            new Zip(path.join(path.join(this.root, this.natives), path.basename(natives.path))).extractAllTo(path.join(this.root, this.natives, this.version), true);
 
             // Eliminar el archivo ZIP
-            fs.unlinkSync(path.join(this.root, this.natives, path.basename(natives.path)))
+            fs.unlinkSync(path.join(this.root, this.natives, path.basename(natives.path)));
           } catch (error) {
             // Manejar errores de descarga
             reject(new Error('Error al descargar los archivos nativos de la versión.', error));
-          }
-        }
-      })
+          };
+        };
+      });
       // Resolver la promesa
-      resolve(`NATIVES DESCARGADOS - ${path.join(this.root, this.natives)}`);
-    })
-  }
+      resolve();
+    });
+  };
 
   // Método para descargar las bibliotecas
   downloadLibraries() {
     return new Promise((resolve, reject) => {
+      // Emite el evento downloadFiles
+      this.emisor.emit('downloadFiles', 'Downloading libraries.');
       // Crear directorio de bibliotecas si no existe
       if(!fs.existsSync(path.join(this.root, this.libraries))) fs.mkdirSync(path.join(this.root, this.libraries));
       // Iterar sobre las bibliotecas y descargarlas
@@ -206,13 +243,33 @@ class Downloader {
           } catch (error) {
             // Manejar errores de descarga
             reject(new Error('Error al descargar las librerías de la versión.', error));
-          }
-        }
+          };
+        };
       });
       // Resolver la promesa
-      resolve(`LIBRERÍAS DESCARGADAS - ${path.join(this.root, this.libraries)}`);
-    })
-  }
+      resolve();
+    });
+  };
+
+  /**
+   * Emite el evento
+   * @param {String} event - Nombre del evento
+   * @param {String} args - Argumentos que se pasarán al evento
+   * @return {String} - Data del evento
+   */
+  emisor(event, args) {
+    this.emisor.emit(event, ...args);
+  };
+
+  /**
+   * Escucha el evento
+   * @param {String} event - Nombre del evento
+   * @param {String} callback - Función personalizada 
+   * @return {String} - Data del evento
+   */
+  on(event, callback) {
+    this.emisor.on(event, callback);
+  };
 
   // Método principal para descargar todos los recursos de una versión de Minecraft
   download(version, root) {
@@ -222,22 +279,24 @@ class Downloader {
       // Verificar si se proporcionó una versión
       if (!version) {
         reject(new Error("No se ha proporcionado una versión"));
-      } 
+      };
 
       // Iniciar la descarga de la versión
-      console.log(`DESCARGANDO VERSION: ${version}`)
-      console.log(await this.downloadVersion())
-      console.log(await this.downloadClient())
-      console.log(await this.downloadAssets())
-      console.log(await this.downloadLibraries())
-      console.log(await this.downloadNatives())
-
+      await this.downloadVersion();
+      this.emisor.emit('downloadFiles', `Minecraft ${version} is now downloading.`);
+      await this.downloadClient();
+      this.emisor.emit('downloadFiles', 'Client downloaded.');
+      await this.downloadAssets();
+      this.emisor.emit('downloadFiles', 'Assets downloaded.');
+      await this.downloadLibraries();
+      this.emisor.emit('downloadFiles', 'Libraries downloaded.');
+      await this.downloadNatives();
+      this.emisor.emit('downloadFiles', 'Natives downloaded.');
+      this.emisor.emit('downloadFiles', 'All files are downloaded.');
       // Resolver la promesa
-      resolve(`Se han descargado correctamente todos los archivos`);
-    })
-  }
+      resolve();
+    });
+  };
+};
 
-}
-
-// Exportar la clase Downloader para su uso en otros módulos
-module.exports = Downloader;
+module.exports = Downloader; // Exportar la clase Downloader para su uso en otros módulos

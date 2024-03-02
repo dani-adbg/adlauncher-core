@@ -6,7 +6,9 @@ This is a simple minecraft-core for download and play minecraft with node.js. / 
 
 Este en un proyecto desarrollado en Node encargado de conseguir los archivos para ejectuar minecraft Vanilla, OptiFine, Forge y Fabric. Se estará actualizando el paquete tomando en cuenta sugerencias y reportes de errores.
 
-El paquete finalmente se encuentra en su primera versión oficial `1.0`, con soporte a OptiFine, Forge y Fabric.
+El paquete se encuentra en su versión oficial `1.2`, con soporte a OptiFine, Forge y Fabric.
+
+La actualización `1.2` contiene un manager de eventos con el que se puede revisar la data que envía el programa.
 
 El proyecto no está habilitado para jugar en servidores premium. (No se apoya a la piratería).
 
@@ -27,8 +29,8 @@ const { Downloader } = require('adlauncher-core');
 const downloader = new Downloader();
 
 // Especifica la versión que quieras descargar (1.8.9) y el directorio 
-// downloader.download('[version]', '[path]').then(a => console.log(a)).catch(e => console.log(e))
-downloader.download('1.8.9', './minecraft').then(a => console.log(a)).catch(e => console.log(e))
+// downloader.download('[version]', '[path]');
+downloader.download('1.8.9', './minecraft');
 ```
 
 ### Launch Version
@@ -135,6 +137,19 @@ Mientras que para jugar desde la versión `1.17` se necesita `Java 17` [Descarga
 Al momento de instalarlos, asegurate que los directorios sean los que traen por defecto, caso contrario pueden ocurrir errores.
 
 Forge fue un total dolor de cabeza. Si ocurre un error, reportalo de inmediato en nuestro [Server de Discord](https://discord.gg/a93w5NpBR9).
+
+### Debug
+Para leer la data que envía el programa, se necesita escribir el manager de eventos.
+```js
+// MANAGER DE EVENTOS PARA LA DESCARGA
+downloader.download('1.8.9', './minecraft');
+downloader.on('downloadFiles', data => console.log(data)); // Se encarga de mostrar los paquetes de archivos que se están descargando.
+downloader.on('percentDownloaded', data => console.log(data)); // Se encarga de mostrar el porcentaje de cada paquete que se está descargando.
+
+// MANAGER DE EVENTOS PARA EL LANZAMIENTO
+launcher.launch(launchOptions);
+launcher.on('debug', data => console.log(data));
+```
 
 ---
 

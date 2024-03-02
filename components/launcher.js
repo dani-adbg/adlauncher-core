@@ -3,31 +3,35 @@ const { spawn } = require('child_process'); // Módulo para crear procesos secun
 const path = require('path'); // Módulo para trabajar con rutas de archivos y directorios
 const downloader = require('./downloader'); // Módulo de descarga personalizado
 const { v4: uuidv4 } = require('uuid'); // Módulo para generar UUID
+const EventEmitter = require('events'); // Módulo para emitir eventos
 
 /**
  * Clase Launcher para gestionar el lanzamiento de Minecraft.
  */
 class Launcher {
   constructor() {
+    // Importa funciones personalizadas 
     this.downloader = new downloader(this);
-  }
+    // Define el emisor de eventos
+    this.emisor = new EventEmitter();
+  };
 
   /**
    * Método para crear el perfil de lanzamiento si no existe.
-   * @param {string} root - Ruta del directorio raíz del juego.
+   * @param {String} root - Ruta del directorio raíz del juego.
    */
   createProfile(root) {
     if(!fs.existsSync(path.resolve(root, 'launcher_profiles.json'))) {
       fs.writeFileSync(path.resolve(root, 'launcher_profiles.json'), JSON.stringify({ profiles: {} }));
-    }
-  }
+    };
+  };
 
   /**
    * Método para encontrar archivos JAR en un directorio y subdirectorios.
-   * @param {string} directorio - Directorio a explorar.
+   * @param {String} directorio - Directorio a explorar.
    * @param {Array} files - Lista de archivos a buscar.
-   * @param {string} ver - Versión de Minecraft.
-   * @returns {string} - Cadena de archivos JAR encontrados.
+   * @param {String} ver - Versión de Minecraft.
+   * @returns {String} - Cadena de archivos JAR encontrados.
    */
   encontrarArchivosJAR(directorio, files, ver) {
     const archivos = fs.readdirSync(directorio);
@@ -45,28 +49,48 @@ class Launcher {
         } else {
           if (path.extname(archivo) === '.jar' && files.includes(archivo) && !archivo.includes('3.2.1')) {
             archivosJARString += rutaCompleta + ';';
-          }
-        }
-      }
+          };
+        };
+      };
     });
     return archivosJARString;
-  }
+  };
 
   /**
    * Método para autenticar al usuario y obtener su UUID.
-   * @param {string} root - Ruta del directorio raíz del juego.
-   * @param {string} us - Nombre de usuario.
-   * @returns {string} - UUID del usuario.
+   * @param {String} root - Ruta del directorio raíz del juego.
+   * @param {String} us - Nombre de usuario.
+   * @returns {String} - UUID del usuario.
    */
   auth(root, us) {
     try {
-      const fil = JSON.parse(fs.readFileSync(path.resolve(root, 'usercache.json'), { encoding: 'utf-8'}))
+      const fil = JSON.parse(fs.readFileSync(path.resolve(root, 'usercache.json'), { encoding: 'utf-8'}));
       return fil.find(x => x.name === us).uuid;
     } catch (error) {
-      console.log("NO SE HAN ENCONTRADO USUARIOS, CREANDO UNO");
+      this.emisor.emit('debug', "NO SE HAN ENCONTRADO USUARIOS, CREANDO UNO");
       return uuidv4();
-    }
-  }
+    };
+  };
+
+  /**
+   * Emite el evento
+   * @param {String} event - Nombre del evento
+   * @param {String} args - Argumentos que se pasarán al evento
+   * @return {String} - Data del evento
+   */
+  emisor(event, args) {
+    this.emisor.emit(event, ...args);
+  };
+
+  /**
+   * Escucha el evento
+   * @param {String} event - Nombre del evento
+   * @param {String} callback - Función personalizada 
+   * @return {String} - Data del evento
+   */
+  on(event, callback) {
+    this.emisor.on(event, callback);
+  };
 
   /**
    * Método para lanzar el juego Minecraft.
@@ -82,7 +106,7 @@ class Launcher {
     const username = options.username;
     const file = JSON.parse(fs.readFileSync(path.resolve(rootPath, this.downloader.versions, version, `${version}.json`), { encoding: 'utf-8'}));
 
-    this.createProfile(rootPath);
+    await this.createProfile(rootPath);
 
     const uuid = this.auth(rootPath, username);
     const reqLibs = file.libraries.filter(element => element.downloads && element.downloads.artifact).map(element => path.basename(element.downloads.artifact.path));
@@ -94,13 +118,13 @@ class Launcher {
       `-Xmx${maxM}`,
       `-Xms${minM}`,
       '-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump'
-    ]
+    ];
 
     if(custom !== null) {
       const customFile = JSON.parse(fs.readFileSync(path.resolve(rootPath, this.downloader.versions, custom, `${custom}.json`), { encoding: 'utf-8' }));
 
       customFile.libraries.forEach(element => {
-        reqLibs.push(element.name.split(':').slice(-2).join("-").concat('.jar'))
+        reqLibs.push(element.name.split(':').slice(-2).join("-").concat('.jar'));
       });
 
       mainClass = customFile.mainClass;
@@ -110,13 +134,13 @@ class Launcher {
       } else {
         if(customFile.arguments.jvm) {
           jvm.push(...customFile.arguments.jvm);
-        }
+        };
         gameArgs.push(...customFile.arguments.game);
-      }
+      };
 
       if(fs.existsSync(path.resolve(rootPath, 'options.txt'))) {
         fs.unlinkSync(path.resolve(rootPath, 'options.txt'));
-      }
+      };
       
       if(custom.includes('forge') && version.includes('1.20')) {
         const matches = custom.split('-');
@@ -126,9 +150,9 @@ class Launcher {
         reqLibs.push(resultado, resultClient);
         if(['1.20', '1.20.1'].includes(version)) {
           reqLibs.push('mergetool-1.1.5-api.jar');
-        }
-      }
-    }
+        };
+      };
+    };
     
     let libs = this.encontrarArchivosJAR(path.resolve(rootPath, this.downloader.libraries), reqLibs, version);
     libs += path.resolve(rootPath, this.downloader.versions, version, `${version}.jar`);
@@ -152,7 +176,7 @@ class Launcher {
       library_directory: (path.resolve(rootPath, this.downloader.libraries)).split(path.sep).join('/'),
       version_name: version,
       classpath_separator: ';'
-    }
+    };
 
     jvm = jvm.map(str => str.replace(/\$\{(\w+)\}/g, (match, p1) => fields[p1] || match));
 
@@ -169,7 +193,7 @@ class Launcher {
         await this.downloader.down('https://launcher.mojang.com/v1/objects/4bb89a97a66f350bc9f73b3ca8509632682aea2e/log4j2_17-111.xml', rootPath, 'log4j2_17-111.xml');
       };
       jvm.push('-Dlog4j.configurationFile=log4j2_17-111.xml');
-    }
+    };
 
     let args = [
       ...jvm,
@@ -179,19 +203,20 @@ class Launcher {
       ...gameArgs
     ];
     
-    args = args.map(arg => fields[arg] ? fields[arg] : arg);    
-    // console.log(args)
+    args = args.map(arg => fields[arg] ? fields[arg] : arg);
+    
     let java = 'java';
     if(custom && custom.includes('forge') && parV < 16) {
       java = 'C:/Program Files/Java/jre-1.8/bin/java.exe';
-      console.log(`USANDO JAVA 8`);
-    }
+      this.emisor.emit('debug', `USANDO JAVA 8`);
+    };
     const spawnRoot = path.resolve(rootPath);
     const minecraft = spawn(java, args, { cwd: spawnRoot });
-    console.log(`INICIANDO MINECRAFT VERSION: ${version}`);
-    minecraft.stdout.on('data', (data) => console.log(data.toString()));
-    minecraft.stderr.on('data', (data) => console.log(data.toString()));
-  }
-}
+    this.emisor.emit('debug', `INICIANDO MINECRAFT VERSION: ${custom || version}`);
+    this.emisor.emit('debug', `INICIANDO CON LOS SIGUIENTES ARGUMENTOS${args.toString()}`);
+    minecraft.stdout.on('data', (data) => this.emisor.emit('debug', data.toString().trim()));
+    minecraft.stderr.on('data', (data) => this.emisor.emit('debug', data.toString().trim()));
+  };
+};
 
 module.exports = Launcher; // Exportar la clase Launcher para su uso en otros archivos

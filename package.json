@@ -1,6 +1,6 @@
 {
   "name": "adlauncher-core",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "Un módulo que permite la descarga y la ejecución de minecraft java con node.js",
   "keywords": [
     "minecraft",
