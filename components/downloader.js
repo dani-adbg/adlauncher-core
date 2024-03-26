@@ -4,6 +4,7 @@ let https = require('https'); // Módulo para realizar solicitudes HTTPS
 https.globalAgent.maxSockets = 2; // Establece el número máximo de conexiones simultáneas para solicitudes HTTPS
 const Zip = require('adm-zip'); // Módulo para manipular archivos ZIP
 const EventEmitter = require('events'); // Módulo para emitir eventos
+const shownNumbers = new Set(); // Objeto para que se eviten repeticiones de números en el evento
 
 // Clase Downloader para descargar archivos relacionados con Minecraft
 class Downloader {
@@ -141,11 +142,6 @@ class Downloader {
 
       // Define variables que servirán para el evento percentDownloaded
       let size = 0, percentage;
-      const targetPercentages = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-      const percentageReached = {};
-      for (const targetPercentage of targetPercentages) {
-        percentageReached[targetPercentage] = false;
-      };
 
       // Iterar sobre los objetos de activos
       for (const key in assetFile.objects) {
@@ -163,16 +159,11 @@ class Downloader {
               // Se le da nuevos valores a las variables de percentDownloaded
               size += fileSize; 
               percentage = Math.floor(((size / totalSize) * 100)); 
-              for (const targetPercentage of targetPercentages) {
-                if (percentage >= targetPercentage && !percentageReached[targetPercentage]) {
-                  // Emite el evento percentDownloaded
-                  this.emisor.emit('percentDownloaded', `${targetPercentage}% downloaded!`);
-                  percentageReached[targetPercentage] = true;
-
-                  // Si está completamente descargado, se resulve la promesa
-                  if(targetPercentage === 100) {
-                    resolve();
-                  };
+              if (!shownNumbers.has(percentage)) {
+                this.emisor.emit('percentDownloaded', `${percentage}% downloaded!`);
+                shownNumbers.add(percentage);
+                if(percentage === 100) {
+                  resolve();
                 };
               };
             }).catch(e => reject(new Error('ERROR', e)));
@@ -293,7 +284,9 @@ class Downloader {
       await this.downloadNatives();
       this.emisor.emit('downloadFiles', 'Natives downloaded.');
       this.emisor.emit('downloadFiles', 'All files are downloaded.');
-      // Resolver la promesa
+      // Resolver la promesa y elimina los emisores de eventos
+      this.emisor.removeAllListeners('downloadFiles');
+      this.emisor.removeAllListeners('percentDownloaded');
       resolve();
     });
   };
