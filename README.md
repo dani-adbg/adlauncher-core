@@ -24,6 +24,16 @@ El proyecto no está habilitado para jugar en servidores premium. (No se apoya a
 
 `npm i adlauncher-core`
 
+### Get Versions
+```js
+const { Downloader } = require('adlauncher-core');
+
+const downloader = new Downloader();
+
+// Obtén las versiones disponibles: vanilla - snapshot
+downloader.getVersions('vanilla');
+```
+
 ### Download Version
 
 ```js
