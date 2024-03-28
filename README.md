@@ -31,7 +31,7 @@ const { Downloader } = require('adlauncher-core');
 const downloader = new Downloader();
 
 // Obtén las versiones disponibles: vanilla - snapshot
-downloader.getVersions('vanilla');
+downloader.getVersions('vanilla').then(data => console.log(data));
 ```
 
 ### Download Version

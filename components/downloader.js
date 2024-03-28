@@ -67,29 +67,32 @@ class Downloader {
    * @param {String} type Ingresa el tipo de lista que necesitas: vanilla - snapshot 
    */
   getVersions(type) {
-    https.get(this.url.meta, (res) => {
-      let data = '';
-
-      res.on('data', async chunk => {
-        data += chunk;
-      });
-
-      res.on('end', () => {
-
-        data = JSON.parse(data);
-
-        switch (type) {
-          case "vanilla":
-            console.log(data.versions.filter(x => x.type === "release"));    
-            break;
-    
-            case "snapshot":
-            console.log(data.versions.filter(x => x.type === "snapshot"));    
-            break;
-        
-          default:
-            throw Error("Error al obtener versiones disponibles.");
-        }
+    return new Promise(async (resolve, reject) => {
+      https.get(this.url.meta, (res) => {
+        let data = '';
+  
+        res.on('data', async chunk => {
+          data += chunk;
+        });
+  
+        res.on('end', () => {
+  
+          data = JSON.parse(data);
+  
+          switch (type) {
+            case "vanilla":
+              resolve(data.versions.filter(x => x.type === "release"));    
+              break;
+      
+              case "snapshot":
+              resolve(data.versions.filter(x => x.type === "snapshot"));    
+              break;
+          
+            default:
+              reject(new Error("Error al obtener versiones disponibles."));
+              break;
+          }
+        });
       });
     });
   };
