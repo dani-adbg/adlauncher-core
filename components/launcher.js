@@ -20,7 +20,7 @@ class Launcher {
    * Método para crear el perfil de lanzamiento si no existe.
    * @param {String} root - Ruta del directorio raíz del juego.
    */
-  createProfile(root) {
+  #createProfile(root) {
     if(!fs.existsSync(path.resolve(root, 'launcher_profiles.json'))) {
       fs.writeFileSync(path.resolve(root, 'launcher_profiles.json'), JSON.stringify({ profiles: {} }));
     };
@@ -33,14 +33,14 @@ class Launcher {
    * @param {String} ver - Versión de Minecraft.
    * @returns {String} - Cadena de archivos JAR encontrados.
    */
-  encontrarArchivosJAR(directorio, files, ver) {
+  #getJarFiles(directorio, files, ver) {
     const archivos = fs.readdirSync(directorio);
     let archivosJARString = '';
 
     archivos.forEach((archivo) => {
       const rutaCompleta = path.resolve(directorio, archivo);
       if (fs.statSync(rutaCompleta).isDirectory()) {
-        archivosJARString += this.encontrarArchivosJAR(rutaCompleta, files, ver);
+        archivosJARString += this.#getJarFiles(rutaCompleta, files, ver);
       } else {
         if(['1.14', '1.14.1', '1.14.2', '1.14.3'].includes(ver)) {
           if(path.extname(archivo) === '.jar' && files.includes(archivo)) {
@@ -62,7 +62,7 @@ class Launcher {
    * @param {String} us - Nombre de usuario.
    * @returns {String} - UUID del usuario.
    */
-  auth(root, us) {
+  #auth(root, us) {
     try {
       const fil = JSON.parse(fs.readFileSync(path.resolve(root, 'usercache.json'), { encoding: 'utf-8'}));
       return fil.find(x => x.name === us).uuid;
@@ -106,9 +106,9 @@ class Launcher {
     const username = options.username;
     const file = JSON.parse(fs.readFileSync(path.resolve(rootPath, this.downloader.versions, version, `${version}.json`), { encoding: 'utf-8'}));
 
-    await this.createProfile(rootPath);
+    await this.#createProfile(rootPath);
 
-    const uuid = this.auth(rootPath, username);
+    const uuid = this.#auth(rootPath, username);
     const reqLibs = file.libraries.filter(element => element.downloads && element.downloads.artifact).map(element => path.basename(element.downloads.artifact.path));
     let mainClass = file.mainClass;
     let gameArgs = file.minecraftArguments ? file.minecraftArguments.split(' ') : file.arguments.game;
@@ -154,7 +154,7 @@ class Launcher {
       };
     };
     
-    let libs = this.encontrarArchivosJAR(path.resolve(rootPath, this.downloader.libraries), reqLibs, version);
+    let libs = this.#getJarFiles(path.resolve(rootPath, this.downloader.libraries), reqLibs, version);
     libs += path.resolve(rootPath, this.downloader.versions, version, `${version}.jar`);
     const fields = {
       '${auth_access_token}': uuid,

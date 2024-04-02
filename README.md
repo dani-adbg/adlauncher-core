@@ -6,9 +6,9 @@ This is a simple minecraft-core for download and play minecraft with node.js. / 
 
 Este en un proyecto desarrollado en Node encargado de conseguir los archivos para ejectuar minecraft Vanilla, OptiFine, Forge y Fabric. Se estará actualizando el paquete tomando en cuenta sugerencias y reportes de errores.
 
-El paquete se encuentra en su versión oficial `1.2`, con soporte a OptiFine, Forge y Fabric.
+El paquete se encuentra en su versión oficial `1.3`, con soporte a OptiFine, Forge y Fabric.
 
-La actualización `1.2` contiene un manager de eventos con el que se puede revisar la data que envía el programa.
+La actualización `1.3` contiene un manager de eventos con el que se puede revisar la data que envía el programa y la funcion `getVersions` que sirve para obtener las versiones de minecraft.
 
 El proyecto no está habilitado para jugar en servidores premium. (No se apoya a la piratería).
 

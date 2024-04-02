@@ -26,7 +26,7 @@ class Downloader {
     this.natives = 'natives';
     // Define el emisor de eventos
     this.emisor = new EventEmitter();
-  };
+  }
   
   // Método para descargar un archivo desde una URL dada
   async down(url, dir, name) {
@@ -98,7 +98,7 @@ class Downloader {
   };
 
   // Método para descargar la versión de Minecraft
-  downloadVersion() {
+  #downloadVersion() {
     return new Promise(async (resolve, reject) => {
       // Emite el evento downloadFiles
       await this.emisor.emit('downloadFiles', 'Downloading main files.');
@@ -132,7 +132,7 @@ class Downloader {
   };
 
   // Método para descargar el cliente de Minecraft
-  downloadClient() {
+  #downloadClient() {
     return new Promise(async (resolve, reject) => {
       // Emite el evento downloadFiles
       this.emisor.emit('downloadFiles', 'Downloading client.');
@@ -158,7 +158,7 @@ class Downloader {
   };
 
   // Método para descargar los activos de Minecraft
-  downloadAssets() {
+  #downloadAssets() {
     return new Promise(async (resolve, reject) => {
       // Emite el evento downloadFiles
       this.emisor.emit('downloadFiles', 'Downloading assets.');
@@ -212,7 +212,7 @@ class Downloader {
   };
 
   // Método para descargar los archivos nativos
-  downloadNatives() {
+  #downloadNatives() {
     return new Promise((resolve, reject) => {
       // Emite el evento downloadFiles
       this.emisor.emit('downloadFiles', 'Downloading natives.');
@@ -247,7 +247,7 @@ class Downloader {
   };
 
   // Método para descargar las bibliotecas
-  downloadLibraries() {
+  #downloadLibraries() {
     return new Promise((resolve, reject) => {
       // Emite el evento downloadFiles
       this.emisor.emit('downloadFiles', 'Downloading libraries.');
@@ -279,9 +279,9 @@ class Downloader {
 
   /**
    * Emite el evento
-   * @param {String} event - Nombre del evento
-   * @param {String} args - Argumentos que se pasarán al evento
-   * @return {String} - Data del evento
+   * @param {String} event Nombre del evento
+   * @param {String} args Argumentos que se pasarán al evento
+   * @return {String} Data del evento
    */
   emisor(event, args) {
     this.emisor.emit(event, ...args);
@@ -289,15 +289,19 @@ class Downloader {
 
   /**
    * Escucha el evento
-   * @param {String} event - Nombre del evento
-   * @param {String} callback - Función personalizada 
-   * @return {String} - Data del evento
+   * @param {String} event Nombre del evento
+   * @param {String} callback Función personalizada 
+   * @return {String} Data del evento
    */
   on(event, callback) {
     this.emisor.on(event, callback);
   };
 
-  // Método principal para descargar todos los recursos de una versión de Minecraft
+  /**
+   *  Método principal para descargar todos los recursos de una versión de Minecraft
+   * @param {String} version Ingresa la version que quieras descargar
+   * @param {String} root Ruta donde se va a descargar
+   */
   download(version, root) {
     this.version = version;
     this.root = root;
@@ -308,23 +312,25 @@ class Downloader {
       };
 
       // Iniciar la descarga de la versión
-      await this.downloadVersion();
+      await this.#downloadVersion();
       this.emisor.emit('downloadFiles', `Minecraft ${version} is now downloading.`);
-      await this.downloadClient();
+      await this.#downloadClient();
       this.emisor.emit('downloadFiles', 'Client downloaded.');
-      await this.downloadAssets();
+      await this.#downloadAssets();
       this.emisor.emit('downloadFiles', 'Assets downloaded.');
-      await this.downloadLibraries();
+      await this.#downloadLibraries();
       this.emisor.emit('downloadFiles', 'Libraries downloaded.');
-      await this.downloadNatives();
+      await this.#downloadNatives();
       this.emisor.emit('downloadFiles', 'Natives downloaded.');
       this.emisor.emit('downloadFiles', 'All files are downloaded.');
       // Resolver la promesa y elimina los emisores de eventos
       this.emisor.removeAllListeners('downloadFiles');
       this.emisor.removeAllListeners('percentDownloaded');
+      shownNumbers.clear();
       resolve();
     });
   };
+
 };
 
 module.exports = Downloader; // Exportar la clase Downloader para su uso en otros módulos
