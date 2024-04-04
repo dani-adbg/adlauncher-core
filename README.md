@@ -25,13 +25,14 @@ El proyecto no está habilitado para jugar en servidores premium. (No se apoya a
 `npm i adlauncher-core`
 
 ### Get Versions
+
 ```js
 const { Downloader } = require('adlauncher-core');
 
 const downloader = new Downloader();
 
 // Obtén las versiones disponibles: vanilla - snapshot
-downloader.getVersions('vanilla').then(data => console.log(data));
+downloader.getVersions('vanilla').then((data) => console.log(data));
 ```
 
 ### Download Version
@@ -41,7 +42,7 @@ const { Downloader } = require('adlauncher-core');
 
 const downloader = new Downloader();
 
-// Especifica la versión que quieras descargar (1.8.9) y el directorio 
+// Especifica la versión que quieras descargar (1.8.9) y el directorio
 // downloader.download('[version]', '[path]');
 downloader.download('1.8.9', './minecraft');
 ```
@@ -58,11 +59,13 @@ const launchOptions = {
   username: 'dani_adbg', // Ingresa tu nombre de usuario
   version: '1.8.9', // Ingresa la versión
   gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: { // Define la memoria que quieras usar
+  memory: {
+    // Define la memoria que quieras usar
     min: '2G', // Mínimo de memoria
-    max: '6G'  // Máximo de memoria
-  }
-}
+    max: '6G', // Máximo de memoria
+  },
+  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+};
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ```
@@ -83,11 +86,13 @@ const launchOptions = {
   username: 'dani_adbg', // Ingresa tu nombre de usuario
   version: '1.8.9-OptiFine_HD_U_M5', // Ingresa la versión de OptiFine
   gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: { // Define la memoria que quieras usar
+  memory: {
+    // Define la memoria que quieras usar
     min: '2G', // Mínimo de memoria
-    max: '6G'  // Máximo de memoria
-  }
-}
+    max: '6G', // Máximo de memoria
+  },
+  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+};
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ```
@@ -110,11 +115,13 @@ const launchOptions = {
   username: 'dani_adbg', // Ingresa tu nombre de usuario
   version: 'fabric-loader-0.15.7-1.18', // Ingresa la versión de Fabric
   gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: { // Define la memoria que quieras usar
+  memory: {
+    // Define la memoria que quieras usar
     min: '2G', // Mínimo de memoria
-    max: '6G'  // Máximo de memoria
-  }
-}
+    max: '6G', // Máximo de memoria
+  },
+  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+};
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ```
@@ -137,11 +144,13 @@ const launchOptions = {
   username: 'dani_adbg', // Ingresa tu nombre de usuario
   version: '1.20-forge-46.0.14', // Ingresa la versión de Forge
   gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: { // Define la memoria que quieras usar
+  memory: {
+    // Define la memoria que quieras usar
     min: '2G', // Mínimo de memoria
-    max: '6G'  // Máximo de memoria
-  }
-}
+    max: '6G', // Máximo de memoria
+  },
+  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+};
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
 ```
@@ -165,12 +174,12 @@ Para leer la data que envía el programa, se necesita escribir el manager de eve
 ```js
 // MANAGER DE EVENTOS PARA LA DESCARGA
 downloader.download('1.8.9', './minecraft');
-downloader.on('downloadFiles', data => console.log(data)); // Se encarga de mostrar los paquetes de archivos que se están descargando.
-downloader.on('percentDownloaded', data => console.log(data)); // Se encarga de mostrar el porcentaje de cada paquete que se está descargando.
+downloader.on('downloadFiles', (data) => console.log(data)); // Se encarga de mostrar los paquetes de archivos que se están descargando.
+downloader.on('percentDownloaded', (data) => console.log(data)); // Se encarga de mostrar el porcentaje de cada paquete que se está descargando.
 
 // MANAGER DE EVENTOS PARA EL LANZAMIENTO
 launcher.launch(launchOptions);
-launcher.on('debug', data => console.log(data));
+launcher.on('debug', (data) => console.log(data));
 ```
 
 ---

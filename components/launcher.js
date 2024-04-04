@@ -112,6 +112,7 @@ class Launcher {
     const version = options.version.match(/\b1\.\d+(\.\d+)?\b/g)[0];
     const custom = options.version !== version ? options.version : null;
     const username = options.username;
+    let java = options.java;
     const file = JSON.parse(
       fs.readFileSync(
         path.resolve(rootPath, this.downloader.versions, version, `${version}.json`),
@@ -213,11 +214,14 @@ class Launcher {
 
     args = args.map((arg) => (fields[arg] ? fields[arg] : arg));
 
-    let java = 'java';
-    if (custom && custom.includes('forge') && parV < 16) {
+    if (!java) {
+      java = 'C:/Program Files/Java/jdk-17/bin/java.exe';
+    }
+    if (custom && custom.includes('forge') && parV < 16 && !java) {
       java = 'C:/Program Files/Java/jre-1.8/bin/java.exe';
       this.emisor.emit('debug', `USANDO JAVA 8`);
     }
+
     const spawnRoot = path.resolve(rootPath);
     const minecraft = spawn(java, args, { cwd: spawnRoot });
     this.emisor.emit('debug', `INICIANDO MINECRAFT VERSION: ${custom || version}`);
