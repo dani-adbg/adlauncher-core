@@ -65,6 +65,7 @@ const launchOptions = {
     max: '6G', // Máximo de memoria
   },
   java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
 };
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
@@ -92,6 +93,7 @@ const launchOptions = {
     max: '6G', // Máximo de memoria
   },
   java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
 };
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
@@ -121,6 +123,7 @@ const launchOptions = {
     max: '6G', // Máximo de memoria
   },
   java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
 };
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
@@ -150,6 +153,7 @@ const launchOptions = {
     max: '6G', // Máximo de memoria
   },
   java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
+  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
 };
 
 launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas

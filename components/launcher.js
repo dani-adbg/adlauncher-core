@@ -113,6 +113,7 @@ class Launcher {
     const custom = options.version !== version ? options.version : null;
     const username = options.username;
     let java = options.java;
+    let java8 = options.java8;
     const file = JSON.parse(
       fs.readFileSync(
         path.resolve(rootPath, this.downloader.versions, version, `${version}.json`),
@@ -217,8 +218,8 @@ class Launcher {
     if (!java) {
       java = 'C:/Program Files/Java/jdk-17/bin/java.exe';
     }
-    if (custom && custom.includes('forge') && parV < 16 && !java) {
-      java = 'C:/Program Files/Java/jre-1.8/bin/java.exe';
+    if (custom && custom.includes('forge') && parV < 16 && !java8) {
+      java = java8 || 'C:/Program Files/Java/jre-1.8/bin/java.exe';
       this.emisor.emit('debug', `USANDO JAVA 8`);
     }
 
