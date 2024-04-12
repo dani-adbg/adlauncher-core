@@ -215,6 +215,8 @@ class Launcher {
 
     args = args.map((arg) => (fields[arg] ? fields[arg] : arg));
 
+    const parV = parseInt(version.split('.')[1]);
+
     if (!java) {
       java = 'C:/Program Files/Java/jdk-17/bin/java.exe';
     }
