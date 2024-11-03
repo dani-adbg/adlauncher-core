@@ -1,200 +1,89 @@
 # ADLAUNCHER-CORE | MINECRAFT LAUNCHER WITH NODE JS
 
-This is a simple minecraft-core for download and play minecraft with node.js. / Simple minecraft-core para descargar y jugar minecraft con node.js.
+Módulo simple para descargar y ejecutar minecraft gratis. **En desarrollo**.
 
----
+Este proyecto está desarrollado con fines educativos. No apoyamos a la piratería, compra el juego original lo más pronto posible para que tengas una mejor experiencia.
 
-Este en un proyecto desarrollado en Node encargado de conseguir los archivos para ejectuar minecraft Vanilla, OptiFine, Forge y Fabric. Se estará actualizando el paquete tomando en cuenta sugerencias y reportes de errores.
+Esta nueva versión 2.0 contiene una actualización total del sistema, permitiendo descargas más rápidas, ejecuciones más estables y escalabilidad al momento de implementar actualizaciones (Habrán actualizaciones muy pronto).
 
-El paquete se encuentra en su versión oficial `1.3`, con soporte a OptiFine, Forge y Fabric.
+## Ejecutables de Java Necesarios
 
-La actualización `1.3` contiene un manager de eventos con el que se puede revisar la data que envía el programa y la funcion `getVersions` que sirve para obtener las versiones de minecraft.
+- Versiones iguales o menores a la 1.16.5 - [Java 8 x64](https://javadl.oracle.com/webapps/download/AutoDL?BundleId=251408_0d8f12bc927a4e2c9f8568ca567db4ee)
+- Versiones iguales o mayores a la 1.17 - [Java 17](https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.exe)
+- Versión 1.21 - [Java 21](https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.exe)
 
-El proyecto no está habilitado para jugar en servidores premium. (No se apoya a la piratería).
+## Forma de uso
 
-## Requirements
-
-- [Java 8](https://www.java.com/en/download/manual.jsp) (Solo para versiones menores a la 1.16.5 de forge)
-- [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-- [Node.js](https://nodejs.org/en)
-
-## Usage
-
-### Install
+### Instalación
 
 `npm i adlauncher-core`
 
-### Get Versions
+### Descargar Versión
 
 ```js
-const { Downloader } = require('adlauncher-core');
+import { downloadMinecraft } from 'adlauncher-core';
 
-const downloader = new Downloader();
-
-// Obtén las versiones disponibles: vanilla - snapshot
-downloader.getVersions('vanilla').then((data) => console.log(data));
+downloadMinecraft({
+  root: './minecraft', // RUTA DEL JUEGO
+  version: '1.8.8', // VERSION A DESCARGAR
+  type: 'release', // TIPO DE VERSION (release - snapshot)
+});
 ```
 
-### Download Version
+### Ejecutar Versión
 
 ```js
-const { Downloader } = require('adlauncher-core');
+import { launchMinecraft } from 'adlauncher-core';
 
-const downloader = new Downloader();
-
-// Especifica la versión que quieras descargar (1.8.9) y el directorio
-// downloader.download('[version]', '[path]');
-downloader.download('1.8.9', './minecraft');
-```
-
-### Launch Version
-
-```js
-const { Launcher } = require('adlauncher-core');
-
-const launcher = new Launcher();
-
-// Declara las opciones con las que vas a lanzar una versión de Minecraft
-const launchOptions = {
-  username: 'dani_adbg', // Ingresa tu nombre de usuario
-  version: '1.8.9', // Ingresa la versión
-  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: {
-    // Define la memoria que quieras usar
-    min: '2G', // Mínimo de memoria
-    max: '6G', // Máximo de memoria
+launchMinecraft({
+  user: {
+    username: 'dani_adbg', // NOMBRE DE USUARIO,
   },
-  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
-  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
-};
-
-launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
-```
-
-### Play with OptiFine
-
-En el caso que quieras jugar con optimización y necesites instalar OptiFine, deberás instalarlo de manera manual y especificar en `version` la carpeta de OptiFine instalada.
-
-Si tienes problemas al instalar `Fabric` de forma manual, puedes ver [Cómo instalar OptiFine en MINECRAFT](https://youtu.be/hPIQIweUXL8?si=ZhKtysEGmv2Ijsn5)
-
-```js
-const { Launcher } = require('adlauncher-core');
-
-const launcher = new Launcher();
-
-// Declara las opciones con las que vas a lanzar una versión de Minecraft
-const launchOptions = {
-  username: 'dani_adbg', // Ingresa tu nombre de usuario
-  version: '1.8.9-OptiFine_HD_U_M5', // Ingresa la versión de OptiFine
-  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
+  version: '1.6.1', // VERSION DE JUEGO
+  type: 'release', // TIPO DE VERSION
+  gameDirectory: './minecraft', // RUTA DE JUEGO
   memory: {
-    // Define la memoria que quieras usar
-    min: '2G', // Mínimo de memoria
-    max: '6G', // Máximo de memoria
+    min: '2G', // MINIMO DE MEMORIA PARA USAR
+    max: '6G', // MAXIMO DE MEMORIA PARA USAR
   },
-  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
-  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
-};
-
-launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
+  java: 'C:/Program Files/Java/jre1.8.0_431/bin/java.exe', // [OPCIONAL] POR DEFECTO USARA LA VERSION DEFAULT DE JAVA INSTALADA
+  usersConfig: './users.json', // [OPCIONAL] POR DEFECTO BUSCARA EL ARCHIVO `usercache.json`
+});
 ```
 
-### Play with Fabric
+### Users Config
 
-En el caso de que quieras jugar con mods, ya está disponible en `adlauncher-core` el soporte de fabric.
+Este parámetro es totalmente opcional, dando la posibilidad de tener un archivo en el que se guarden los datos del usuario (username, uuid). Esto permite agregar funcionalidades al momento de crear un launcher completo.
 
-Debes instalarlo de forma manual al igual que OptiFine y especificar en `version` la carpeta de fabric instalada.
+`./users.json`
 
-Si tienes problemas al instalar `Fabric` de forma manual, puedes ver [Cómo INSTALAR FABRIC y MODS en MINECRAFT](https://youtu.be/taUC6R_LiOE?si=Ewz36e0YfV0LOWAp)
+La estructura del archivo debe ser la siguiente:
 
 ```js
-const { Launcher } = require('adlauncher-core');
-
-const launcher = new Launcher();
-
-// Declara las opciones con las que vas a lanzar una versión de Minecraft
-const launchOptions = {
-  username: 'dani_adbg', // Ingresa tu nombre de usuario
-  version: 'fabric-loader-0.15.7-1.18', // Ingresa la versión de Fabric
-  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: {
-    // Define la memoria que quieras usar
-    min: '2G', // Mínimo de memoria
-    max: '6G', // Máximo de memoria
+[
+  {
+    name: 'dani_adbg', // username
+    uuid: '1234-1234-1234' // uuid v4
   },
-  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
-  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
-};
-
-launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
+  {
+    name: 'dani', // username
+    uuid: '9876-3211-6540' // uuid v4
+  }
+  ...
+]
 ```
 
-### Play with Forge
+### Notas
 
-En el caso de que quieras jugar con mods y no te gusta `fabric`, ya está disponible finalmente en `adlauncher-core` el soporte de forge.
+- Desde la versión `1.6.1` en adelante, todas las versiones son estables.
 
-Debes instalarlo de forma manual al igual que OptiFine y Fabric, especifica en `version` la carpeta de forge instalada.
-
-Si tienes problemas al instalar `Forge` de forma manual, puedes ver [Cómo INSTALAR FORGE y MODS en MINECRAFT](https://youtu.be/ccecMbYgBKI).
-
-```js
-const { Launcher } = require('adlauncher-core');
-
-const launcher = new Launcher();
-
-// Declara las opciones con las que vas a lanzar una versión de Minecraft
-const launchOptions = {
-  username: 'dani_adbg', // Ingresa tu nombre de usuario
-  version: '1.20-forge-46.0.14', // Ingresa la versión de Forge
-  gameDirectory: './minecraft', // Ingresa el directorio donde tienes descargado Minecraft
-  memory: {
-    // Define la memoria que quieras usar
-    min: '2G', // Mínimo de memoria
-    max: '6G', // Máximo de memoria
-  },
-  java: 'C:/Program Files/Java/jdk-17/bin/java.exe', // Ubicación exacta del archivo java.exe (OPCIONAL)
-  java8: 'C:/Program Files/Java/jre-1.8/bin/java.exe', // Ubicación exacta del archivo java.exe v8 (OPCIONAL)
-};
-
-launcher.launch(launchOptions); // Inicia Minecraft con las opciones declaradas
-```
-
-#### Importante
-
-Forge solo está disponible desde la versión `1.12` hasta la más reciente.
-
-Para jugar desde la `1.12` hasta la `1.16.5` se necesita `Java 8 x64` [Descarga Java 8](https://www.java.com/en/download/manual.jsp)
-
-Mientras que para jugar desde la versión `1.17` se necesita `Java 17` [Descarga Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-
-Al momento de instalarlos, asegurate que los directorios sean los que traen por defecto, caso contrario pueden ocurrir errores.
-
-Forge fue un total dolor de cabeza. Si ocurre un error, reportalo de inmediato en nuestro [Server de Discord](https://discord.gg/a93w5NpBR9).
-
-### Debug
-
-Para leer la data que envía el programa, se necesita escribir el manager de eventos.
-
-```js
-// MANAGER DE EVENTOS PARA LA DESCARGA
-downloader.download('1.8.9', './minecraft');
-downloader.on('downloadFiles', (data) => console.log(data)); // Se encarga de mostrar los paquetes de archivos que se están descargando.
-downloader.on('percentDownloaded', (data) => console.log(data)); // Se encarga de mostrar el porcentaje de cada paquete que se está descargando.
-
-// MANAGER DE EVENTOS PARA EL LANZAMIENTO
-launcher.launch(launchOptions);
-launcher.on('debug', (data) => console.log(data));
-```
+- El paquete sigue en desarrollo, si encuentras algún error comunícalo en mi [Servidor de Discord](https://discord.ggmWz9q7cwfc).
 
 ---
 
-## Contributors
-
-<img src="https://contrib.rocks/image?repo=dani-adbg/adlauncher-core" alt="Img">
-
 ## Support
 
-[![Discord](https://dcbadge.vercel.app/api/server/a93w5NpBR9)](https://discord.gg/a93w5NpBR9)
+[![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/mWz9q7cwfc)](https://discord.gg/mWz9q7cwfc)
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://www.youtube.com/@dani_adbg)
 
 ---
