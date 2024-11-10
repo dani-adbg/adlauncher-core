@@ -1,8 +1,8 @@
-import { download } from '../Utils/download.js';
-import { readFileSync, mkdirSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+const download = require('../Utils/download.js');
+const { readFileSync, mkdirSync, existsSync } = require('node:fs');
+const { join, resolve } = require('node:path');
 
-export async function assetsDownloader({ root, version, asset, totalSize }) {
+module.exports = async function assetsDownloader({ root, version, asset, totalSize }) {
   const dir = resolve(root, 'assets');
   const indexAssets = join(dir, 'indexes');
 
@@ -57,4 +57,4 @@ export async function assetsDownloader({ root, version, asset, totalSize }) {
   } catch (error) {
     console.error('Error al descargar archivo\n', error);
   }
-}
+};

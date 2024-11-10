@@ -1,9 +1,9 @@
-import { download } from '../Utils/download.js';
-import { basename, resolve } from 'node:path';
-import { existsSync, mkdirSync, unlinkSync } from 'node:fs';
-import Zip from 'adm-zip';
+const download = require('../Utils/download.js');
+const { basename, resolve } = require('node:path');
+const { existsSync, mkdirSync, unlinkSync } = require('node:fs');
+const Zip = require('adm-zip');
 
-export async function nativesDownloader({ root, version, libraries }) {
+module.exports = async function nativesDownloader({ root, version, libraries }) {
   const dir = resolve(root, 'natives');
   const natives = libraries
     .filter(
@@ -35,4 +35,4 @@ export async function nativesDownloader({ root, version, libraries }) {
     console.error('Error al descargar archivo nativo:\n', error);
     return;
   }
-}
+};

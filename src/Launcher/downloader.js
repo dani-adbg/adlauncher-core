@@ -1,8 +1,8 @@
-import { versionDownloader } from '../Downloaders/versionsDownloader.js';
-import { clientDownloader } from '../Downloaders/clientDownloader.js';
-import { nativesDownloader } from '../Downloaders/nativesDownloader.js';
-import { librariesDownloader } from '../Downloaders/librariesDownloader.js';
-import { assetsDownloader } from '../Downloaders/assetsDownloader.js';
+const versionDownloader = require('../Downloaders/versionsDownloader.js');
+const clientDownloader = require('../Downloaders/clientDownloader.js');
+const nativesDownloader = require('../Downloaders/nativesDownloader.js');
+const librariesDownloader = require('../Downloaders/librariesDownloader.js');
+const assetsDownloader = require('../Downloaders/assetsDownloader.js');
 
 /**
  *
@@ -10,8 +10,10 @@ import { assetsDownloader } from '../Downloaders/assetsDownloader.js';
  * @param {string} version Version a Descargar - '1.16.5'
  * @param {string} version Tipo de Version a Descargar - 'release' o 'snapshot'
  */
-export async function downloadMinecraft({ root, version, type }) {
+module.exports = async function downloadMinecraft({ root, version, type }) {
   let data = { root: root, version: version, type: type };
+
+  console.log(`Empezando la descarga de Minecraft v${version}`);
 
   let versionData = JSON.parse(JSON.parse(await versionDownloader(data)));
 
@@ -35,4 +37,4 @@ export async function downloadMinecraft({ root, version, type }) {
     asset: versionData.assetIndex.url,
     totalSize: versionData.assetIndex.totalSize,
   });
-}
+};

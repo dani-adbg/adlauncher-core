@@ -1,8 +1,8 @@
-import { download } from '../Utils/download.js';
-import { resolve } from 'node:path';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+const download = require('../Utils/download.js');
+const { resolve } = require('node:path');
+const { existsSync, mkdirSync, readFileSync } = require('node:fs');
 
-export async function versionDownloader({ root, version, type }) {
+module.exports = async function versionDownloader({ root, version, type }) {
   const versionsDir = resolve(root, 'cache', 'json');
 
   try {
@@ -49,4 +49,4 @@ export async function versionDownloader({ root, version, type }) {
   } catch (error) {
     console.error(`Error al descargar metadata de la version ${version}\n`, error);
   }
-}
+};

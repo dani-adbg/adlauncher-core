@@ -1,4 +1,4 @@
-import { downloadMinecraft } from './Launcher/downloader.js';
-import { launchMinecraft } from './Launcher/launcher.js';
+const downloadMinecraft = require('./Launcher/downloader.js');
+const launchMinecraft = require('./Launcher/launcher.js');
 
-export { downloadMinecraft, launchMinecraft };
+module.exports = { downloadMinecraft, launchMinecraft };

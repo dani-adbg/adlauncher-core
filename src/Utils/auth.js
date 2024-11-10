@@ -1,13 +1,13 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { randomUUID } from 'node:crypto';
+const { existsSync, readFileSync, writeFileSync } = require('node:fs');
+const { resolve } = require('node:path');
+const { randomUUID } = require('node:crypto');
 
-export function createProfile(root) {
+function createProfile(root) {
   const dir = resolve(root, 'launcher_profiles.json');
   if (!existsSync(dir)) writeFileSync(dir, JSON.stringify({ profiles: {} }));
 }
 
-export function authUser({ user, config }) {
+function authUser({ user, config }) {
   user = JSON.parse(user);
 
   if (!existsSync(config)) {
@@ -38,3 +38,5 @@ export function authUser({ user, config }) {
     }
   }
 }
+
+module.exports = { createProfile, authUser };

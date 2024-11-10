@@ -1,22 +1,34 @@
-import { readdirSync, statSync } from 'node:fs';
-import { basename, extname, join, resolve } from 'node:path';
+const { readdirSync, statSync } = require('node:fs');
+const { basename, join } = require('node:path');
 
-let files;
+let files,
+  missingLibs = [],
+  missing = true;
 
-export function getJarFiles({ root, libNecessary, version }) {
-  let jarFiles = '';
+module.exports = function getJarFiles({ root, libNecessary }) {
+  let libraries = '';
   files = readdirSync(root);
+  if (missing) {
+    missingLibs.push(...libNecessary);
+    missing = false;
+  }
 
   files.forEach((file) => {
     const pathFile = join(root, file);
     if (statSync(pathFile).isDirectory()) {
-      jarFiles += getJarFiles({ root: pathFile, libNecessary, version });
+      libraries += getJarFiles({ root: pathFile, libNecessary }).libraries;
     } else {
       if (libNecessary.includes(basename(pathFile))) {
-        jarFiles += pathFile + ';';
+        libraries += pathFile + ';';
+        let index = missingLibs.indexOf(file);
+
+        while (index !== -1) {
+          missingLibs.splice(index, 1);
+          index = missingLibs.indexOf(file);
+        }
       }
     }
   });
 
-  return jarFiles;
-}
+  return { libraries, missingLibs };
+};

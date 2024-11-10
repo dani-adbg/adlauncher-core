@@ -1,10 +1,10 @@
-import { get, globalAgent } from 'node:https';
-import { join } from 'node:path';
-import { createWriteStream } from 'node:fs';
+const { get, globalAgent } = require('node:https');
+const { join } = require('node:path');
+const { createWriteStream } = require('node:fs');
 
 globalAgent.maxSockets = 5;
 
-export function download({ url, dir, name }) {
+module.exports = function download({ url, dir, name }) {
   return new Promise((resolve, reject) => {
     const req = get(url, { timeout: 50000 }, (res) => {
       const filePath = join(dir, name);
@@ -18,4 +18,4 @@ export function download({ url, dir, name }) {
 
     req.on('error', reject);
   });
-}
+};

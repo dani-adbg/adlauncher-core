@@ -1,8 +1,8 @@
-import { download } from '../Utils/download.js';
-import { resolve } from 'node:path';
-import { existsSync, mkdirSync } from 'node:fs';
+const download = require('../Utils/download.js');
+const { resolve } = require('node:path');
+const { existsSync, mkdirSync } = require('node:fs');
 
-export async function clientDownloader({ root, version, client }) {
+module.exports = async function clientDownloader({ root, version, client }) {
   const dir = resolve(root, 'versions', version);
 
   try {
@@ -21,4 +21,4 @@ export async function clientDownloader({ root, version, client }) {
     console.error('Error al descargar cliente:\n', error);
     return;
   }
-}
+};

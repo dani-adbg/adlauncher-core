@@ -1,8 +1,8 @@
-import { download } from '../Utils/download.js';
-import { basename, dirname, resolve } from 'node:path';
-import { existsSync, mkdirSync } from 'node:fs';
+const download = require('../Utils/download.js');
+const { basename, dirname, resolve } = require('node:path');
+const { existsSync, mkdirSync } = require('node:fs');
 
-export async function librariesDownloader({ root, libraries }) {
+module.exports = async function librariesDownloader({ root, libraries }) {
   libraries = libraries
     .filter((lib) => lib.downloads.artifact)
     .map((lib) => {
@@ -27,4 +27,4 @@ export async function librariesDownloader({ root, libraries }) {
     console.error('Error al descargar archivo nativo:\n', error);
     return;
   }
-}
+};
