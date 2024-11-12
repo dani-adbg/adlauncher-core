@@ -120,7 +120,7 @@ module.exports = async function launchMinecraft(data) {
   console.log('Lanzando Minecraft version:', customVersion);
   console.log('Usando Java:', java);
 
-  console.log(args);
+  // console.log(args);
 
   const minecraft = spawn(java, args, { cwd: spawnRoot });
   minecraft.stdout.on('data', (data) => console.log('debug:', data.toString().trim()));

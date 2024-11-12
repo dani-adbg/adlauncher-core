@@ -1,5 +1,6 @@
 module.exports = function getVersion(version) {
-  const versionPattern = /(\d+\.\d+)(?:\.|$)/;
+  let versionPattern = /(\d+\.\d+)(?:\.\d+)?(?:-|$)/;
+
   const match = version.match(versionPattern);
 
   if (!match) return null;
