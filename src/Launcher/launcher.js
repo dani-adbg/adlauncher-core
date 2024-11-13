@@ -82,6 +82,15 @@ module.exports = async function launchMinecraft(data) {
             return `${name}-${version.replace('@', '.')}`;
           }
         });
+    } else if (type === 'optifine') {
+      customLibs = customFile.libraries
+        .filter((dependency) => dependency.name)
+        .map((customLib) => {
+          const parts = customLib.name.split(':');
+          const [, name, version] = parts;
+
+          return `${name}-${version}.jar`;
+        });
     }
 
     libNecessary.push(...customLibs);
