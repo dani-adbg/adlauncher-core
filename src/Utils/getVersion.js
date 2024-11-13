@@ -1,6 +1,5 @@
 module.exports = function getVersion(version) {
-  let versionPattern = /^(\d+\.\d+(?:\.\d+)?)/;
-
+  const versionPattern = /^(\d+\.\d+(?:\.\d+)?)/;
   const neoforgePattern = /^neoforge-(\d+\.\d+)/;
 
   const neoforgeMatch = version.match(neoforgePattern);

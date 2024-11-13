@@ -56,7 +56,7 @@ module.exports = async function launchMinecraft(data) {
     customFile = JSON.parse(customFile);
 
     let customLibs;
-    if (type === 'forge') {
+    if (type === 'forge' || type === 'fabric' || type === 'optifine') {
       customLibs = customFile.libraries
         .filter((dependency) => dependency.name)
         .map((customLib) => {
@@ -82,21 +82,12 @@ module.exports = async function launchMinecraft(data) {
             return `${name}-${version.replace('@', '.')}`;
           }
         });
-    } else if (type === 'optifine') {
-      customLibs = customFile.libraries
-        .filter((dependency) => dependency.name)
-        .map((customLib) => {
-          const parts = customLib.name.split(':');
-          const [, name, version] = parts;
-
-          return `${name}-${version}.jar`;
-        });
     }
 
     libNecessary.push(...customLibs);
   }
 
-  if (type === 'neoforge') {
+  if (type === 'neoforge' || type === 'fabric') {
     libNecessary = filterVersionLib(libNecessary);
   }
 
