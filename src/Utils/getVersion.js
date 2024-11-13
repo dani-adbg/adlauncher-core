@@ -1,15 +1,17 @@
 module.exports = function getVersion(version) {
-  let versionPattern = /(\d+\.\d+)(?:\.\d+)?(?:-|$)/;
+  let versionPattern = /^(\d+\.\d+(?:\.\d+)?)/;
 
-  const match = version.match(versionPattern);
+  const neoforgePattern = /^neoforge-(\d+\.\d+)/;
 
-  if (!match) return null;
-
-  version = match[1];
-
-  if (version.startsWith('21.')) {
-    version = '1.' + version;
+  const neoforgeMatch = version.match(neoforgePattern);
+  if (neoforgeMatch) {
+    return '1.' + neoforgeMatch[1];
   }
 
-  return version;
+  const match = version.match(versionPattern);
+  if (match) {
+    return match[1];
+  }
+
+  return null;
 };
