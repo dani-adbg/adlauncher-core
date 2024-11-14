@@ -53,9 +53,11 @@ launchMinecraft({
 });
 ```
 
-#### Ejecutar Versión Forge o NeoForge
+#### Ejecutar Versión Custom
 
-Las únicas diferencias están en la versión y en el tipo de versión que se van a ejecutar.
+Para ejecutar versiones `Custom` necesitamos especificar el tipo y la versión específica.
+
+Versiones custom disponibles: `forge`, `neoforge`, `optifine`, `fabric`.
 
 ```js
 const { launchMinecraft } = require('adlauncher-core');
@@ -64,8 +66,8 @@ launchMinecraft({
   user: {
     username: 'dani_adbg', // NOMBRE DE USUARIO,
   },
-  version: '1.12.2-forge-14.23.5.2860', // VERSION DE JUEGO - Varia dependiendo de la instalación.
-  type: 'forge', // O neoforge
+  version: '1.12.2-forge-14.23.5.2860', // VERSION DE JUEGO - Varía dependiendo de la instalación.
+  type: 'forge', // neoforge - optifine - fabric
   gameDirectory: './minecraft', // RUTA DE JUEGO
   memory: {
     min: '2G', // MINIMO DE MEMORIA PARA USAR
