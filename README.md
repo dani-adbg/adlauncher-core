@@ -4,7 +4,7 @@ Módulo simple para descargar y ejecutar minecraft gratis. **En desarrollo**.
 
 Este proyecto está desarrollado con fines educativos. No apoyamos a la piratería, compra el juego original lo más pronto posible para que tengas una mejor experiencia.
 
-Esta nueva versión 2.1 contiene el soporte total de las versiones Forge a partir de la v1.8 y NeoForge. Actualmente estamos trabajando en el soporte para Fabric y Optifine. También se cambió a sistema CommonJS. (Habrán actualizaciones muy pronto).
+Esta nueva versión 2.4 contiene el soporte total de las versiones Forge a partir de la v1.8, NeoForge, Fabric y OptiFine. Actualmente estamos trabajando en el soporte para ModPacks. También se cambió a sistema CommonJS. (Habrán actualizaciones muy pronto).
 
 ## Ejecutables de Java Necesarios
 
@@ -104,7 +104,7 @@ La estructura del archivo debe ser la siguiente:
 
 - Desde la versión `1.6.1` en adelante, todas las versiones son estables.
 
-- El paquete sigue en desarrollo, si encuentras algún error comunícalo en mi [Servidor de Discord](https://discord.ggmWz9q7cwfc).
+- El paquete sigue en desarrollo, si encuentras algún error comunícalo en mi [Servidor de Discord](https://discord.mWz9q7cwfc).
 
 ---
 
