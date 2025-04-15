@@ -1,16 +1,23 @@
-module.exports = function getVersion(version) {
-  const versionPattern = /^(\d+\.\d+(?:\.\d+)?)/;
-  const neoforgePattern = /^neoforge-(\d+\.\d+)/;
+const { readFileSync } = require('node:fs');
+const { resolve } = require('node:path');
 
-  const neoforgeMatch = version.match(neoforgePattern);
-  if (neoforgeMatch) {
-    return '1.' + neoforgeMatch[1];
-  }
+module.exports = function getVersion(version, gameDirectory) {
+  const customVersionFile = JSON.parse(
+    readFileSync(resolve(gameDirectory, 'versions', `${version}`, `${version}.json`), {
+      encoding: 'utf-8',
+    })
+  );
 
-  const match = version.match(versionPattern);
-  if (match) {
-    return match[1];
-  }
+  let vanillaVersion = customVersionFile.inheritsFrom || customVersionFile.id;
 
-  return null;
+  let vanillaVersionFile = JSON.parse(
+    readFileSync(
+      resolve(gameDirectory, 'versions', `${vanillaVersion}`, `${vanillaVersion}.json`),
+      {
+        encoding: 'utf-8',
+      }
+    )
+  );
+
+  return [vanillaVersionFile, customVersionFile];
 };

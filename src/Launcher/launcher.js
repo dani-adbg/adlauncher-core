@@ -14,9 +14,8 @@ const filterVersionLib = require('../Utils/filterVersionLib.js');
  */
 module.exports = async function launchMinecraft(data) {
   let { user, gameDirectory, version, type, java, usersConfig } = data;
-  let customVersion = version;
 
-  version = getVersion(version);
+  let [vanillaVersionFile, customVersionFile] = getVersion(version, gameDirectory);
 
   createProfile(gameDirectory);
 
@@ -24,16 +23,10 @@ module.exports = async function launchMinecraft(data) {
   usersConfig = resolve(usersConfig || join(gameDirectory, 'usercache.json'));
   user = authUser({ user: userData, config: usersConfig });
 
-  let versionFile = readFileSync(
-    resolve(gameDirectory, 'versions', `${version}`, `${version}.json`),
-    {
-      encoding: 'utf-8',
-    }
-  );
-  versionFile = JSON.parse(versionFile);
+  // LIBRERIAS
 
   const libRoot = resolve(gameDirectory, 'libraries');
-  let libNecessary = versionFile.libraries
+  let libNecessary = vanillaVersionFile.libraries
     .filter(
       (lib) =>
         lib.downloads.artifact &&
@@ -43,21 +36,12 @@ module.exports = async function launchMinecraft(data) {
           ) ||
           lib.rules.some((rule) => rule.action === 'disallow' && rule.os && rule.os.name === 'osx'))
     )
-    .map((lib) => basename(lib.downloads.artifact.path));
+    .map((lib) => basename(lib.downloads.artifact.path || lib.downloads.artifact.url));
 
-  let customFile;
   if (type !== 'release' && type !== 'snapshot') {
-    customFile = readFileSync(
-      resolve(gameDirectory, 'versions', `${customVersion}`, `${customVersion}.json`),
-      {
-        encoding: 'utf-8',
-      }
-    );
-    customFile = JSON.parse(customFile);
-
     let customLibs;
     if (type === 'forge' || type === 'fabric' || type === 'optifine') {
-      customLibs = customFile.libraries
+      customLibs = customVersionFile.libraries
         .filter((dependency) => dependency.name)
         .map((customLib) => {
           const parts = customLib.name.split(':');
@@ -70,7 +54,7 @@ module.exports = async function launchMinecraft(data) {
           }
         });
     } else if (type === 'neoforge') {
-      customLibs = customFile.libraries
+      customLibs = customVersionFile.libraries
         .filter((dependency) => dependency.name)
         .map((customLib) => {
           const parts = customLib.name.split(':');
@@ -106,9 +90,9 @@ module.exports = async function launchMinecraft(data) {
   let args = argsResolver({
     user: user,
     libs: libraries,
-    versionFile: versionFile,
+    versionFile: vanillaVersionFile,
     data: data,
-    customFile: customFile,
+    customFile: customVersionFile,
   });
 
   const spawnRoot = resolve(gameDirectory);
@@ -117,10 +101,8 @@ module.exports = async function launchMinecraft(data) {
     java = 'java';
   }
 
-  console.log('Lanzando Minecraft version:', customVersion);
+  console.log('Lanzando Minecraft version:', customVersionFile.id);
   console.log('Usando Java:', java);
-
-  // console.log(args);
 
   const minecraft = spawn(java, args, { cwd: spawnRoot });
   minecraft.stdout.on('data', (data) => console.log('debug:', data.toString().trim()));

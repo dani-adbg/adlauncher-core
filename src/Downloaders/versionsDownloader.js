@@ -6,15 +6,13 @@ module.exports = async function versionDownloader({ root, version, type }) {
   const versionsDir = resolve(root, 'cache', 'json');
 
   try {
-    if (!existsSync(`${versionsDir}/version_manifest.json`)) {
-      mkdirSync(versionsDir, { recursive: true });
+    mkdirSync(versionsDir, { recursive: true });
 
-      await download({
-        url: 'https://launchermeta.mojang.com/mc/game/version_manifest.json',
-        dir: versionsDir,
-        name: 'version_manifest.json',
-      });
-    }
+    await download({
+      url: 'https://launchermeta.mojang.com/mc/game/version_manifest.json',
+      dir: versionsDir,
+      name: 'version_manifest.json',
+    });
   } catch (error) {
     console.error('Error al descargar version_manifest:\n', error);
     return;

@@ -1,6 +1,6 @@
 const { resolve, sep, join } = require('node:path');
 const { existsSync } = require('node:fs');
-const filterObjArgs = require('./filterObjArgs.js');
+const { filterGameArgs, filterJvmArgs } = require('./filterObjArgs.js');
 
 module.exports = function argsResolver({ user, libs, versionFile, data, customFile }) {
   data = JSON.parse(data);
@@ -11,17 +11,16 @@ module.exports = function argsResolver({ user, libs, versionFile, data, customFi
 
   let gameArgs = minecraftArguments?.split(' ') || arguments?.game;
 
-  const cVer = resolve(join(gameDirectory, 'versions', version, `${version}.jar`));
+  let cVer = resolve(join(gameDirectory, 'versions', version, `${version}.jar`));
   libs += existsSync(cVer) ? resolve(cVer) : resolve(gameDirectory, 'versions', id, `${id}.jar`);
 
   let jvm = [
-    `-Djava.library.path=${resolve(gameDirectory, 'natives', id)}`,
     `-Xmx${memory.max}`,
     `-Xms${memory.min}`,
-    '-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump',
+    arguments?.jvm || [`-Djava.library.path=${resolve(gameDirectory, 'natives', id)}`, '-cp', libs],
   ];
 
-  if (customFile != null) {
+  if (customFile.mainClass != versionFile.mainClass) {
     mainClass = customFile.mainClass;
 
     if (!minecraftArguments) {
@@ -34,8 +33,8 @@ module.exports = function argsResolver({ user, libs, versionFile, data, customFi
     }
   }
 
-  jvm = filterObjArgs(jvm);
-  gameArgs = filterObjArgs(gameArgs);
+  jvm = filterJvmArgs(jvm);
+  gameArgs = filterGameArgs(gameArgs);
 
   const fields = {
     '${auth_access_token}': uuid,
@@ -56,9 +55,13 @@ module.exports = function argsResolver({ user, libs, versionFile, data, customFi
     '${resolution_height}': 482,
     '${library_directory}': resolve(gameDirectory, 'libraries').split(sep).join('/'),
     '${classpath_separator}': ';',
+    '${natives_directory}': resolve(gameDirectory, 'natives', id),
+    '${classpath}': [libs],
+    '${launcher_name}': 'adlauncher-core',
+    '${launcher_version}': 'v1.0',
   };
 
-  let args = [...jvm, '-cp', libs, mainClass, ...gameArgs];
+  let args = [...jvm, mainClass, ...gameArgs];
 
   args = args.map((arg) => {
     return typeof arg === 'string'
@@ -67,5 +70,6 @@ module.exports = function argsResolver({ user, libs, versionFile, data, customFi
         )
       : arg;
   });
+
   return args;
 };
